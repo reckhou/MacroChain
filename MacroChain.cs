@@ -48,6 +48,7 @@ namespace MacroChain {
                     });
 
                     Framework.Update += FrameworkUpdate;
+                    Chat.ChatMessage += ChatCommand.OnChatMessage;
                 } catch (Exception ex) {
                     PluginLog.LogError(ex.ToString());
                 }
@@ -62,6 +63,7 @@ namespace MacroChain {
             macroCallHook?.Dispose();
             macroCallHook = null;
             Framework.Update -= FrameworkUpdate;
+            Chat.ChatMessage -= ChatCommand.OnChatMessage;
         }
 
         private RaptureMacroModule.Macro* lastExecutedMacro = null;
@@ -139,10 +141,10 @@ namespace MacroChain {
 
         public void OnRunMacroCommand(string command, string args) {
             try {
-                if (lastExecutedMacro != null) {
-                    Chat.PrintError("/runmacro is not usable while macros are running. Please use /nextmacro");
-                    return;
-                }
+                //if (lastExecutedMacro != null) {
+                //    Chat.PrintError("/runmacro is not usable while macros are running. Please use /nextmacro");
+                //    return;
+                //}
                 var argSplit = args.Split(' ');
                 var num = byte.Parse(argSplit[0]);
 
