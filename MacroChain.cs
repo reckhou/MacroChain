@@ -10,6 +10,8 @@ using Dalamud.Hooking;
 using Dalamud.IoC;
 using Dalamud.Logging;
 using Dalamud.Plugin;
+using Dalamud;
+
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using FFXIVClientStructs.FFXIV.Client.UI.Shell;
 
@@ -18,6 +20,7 @@ namespace MacroChain {
 
         [PluginService] public static CommandManager CommandManager { get; private set; } = null!;
         [PluginService] public static Framework Framework { get; private set; } = null!;
+        [PluginService] public static DalamudPluginInterface PluginInterface { get; set; } = null!;
 
         [PluginService] public static ClientState ClientState { get; private set; } = null!;
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
@@ -29,9 +32,15 @@ namespace MacroChain {
         private Hook<MacroCallDelegate> macroCallHook;
 
         private bool isDisposed;
+        ConfigUI configUI;
+        public static Config config;
 
-        public MacroChain() {
+        public MacroChain(DalamudPluginInterface pi) {
+            DalamudApi.Initialize(this, pi);
+
             Task.Run(() => {
+                configUI = new ConfigUI();
+
                 FFXIVClientStructs.Resolver.Initialize();
                 if (isDisposed) return;
                 try {
@@ -49,6 +58,9 @@ namespace MacroChain {
 
                     Framework.Update += FrameworkUpdate;
                     Chat.ChatMessage += ChatCommand.OnChatMessage;
+
+                    PluginInterface.UiBuilder.Draw += OnDraw;
+                    PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
                 } catch (Exception ex) {
                     PluginLog.LogError(ex.ToString());
                 }
@@ -64,6 +76,18 @@ namespace MacroChain {
             macroCallHook = null;
             Framework.Update -= FrameworkUpdate;
             Chat.ChatMessage -= ChatCommand.OnChatMessage;
+            PluginInterface.UiBuilder.Draw -= OnDraw;
+            PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
+        }
+
+        public void OnDraw()
+        {
+            configUI.Draw();
+        }
+
+        public void OpenConfigUi()
+        {
+            configUI.Enabled = !configUI.Enabled;
         }
 
         private RaptureMacroModule.Macro* lastExecutedMacro = null;
