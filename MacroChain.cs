@@ -198,5 +198,84 @@ namespace MacroChain {
                 PluginLog.LogError(ex.ToString());
             }
         }
+
+
+        [Command("/mchain")]
+        [HelpMessage("toggle MidiBard window\n" +
+                     "/mchain [channel name] → to watch specified channel. e.g. /mchain LS1 -> Watch link shell 1")]
+        public void Command(string command, string args) => OnCommand(command, args);
+
+        async Task OnCommand(string command, string args)
+        {
+            var argStrings = args.ToLowerInvariant().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
+            PluginLog.Debug($"command: {command}, {string.Join('|', argStrings)}");
+            if (argStrings.Any())
+            {
+                switch (argStrings[0])
+                {
+                    case "party":
+                        config.watchChannel = Config.eWatchChannel.Party;
+                        break;
+                    case "ls1":
+                        config.watchChannel = Config.eWatchChannel.LS1;
+                        break;
+                    case "ls2":
+                        config.watchChannel = Config.eWatchChannel.LS2;
+                        break;
+                    case "ls3":
+                        config.watchChannel = Config.eWatchChannel.LS3;
+                        break;
+                    case "ls4":
+                        config.watchChannel = Config.eWatchChannel.LS4;
+                        break;
+                    case "ls5":
+                        config.watchChannel = Config.eWatchChannel.LS5;
+                        break;
+                    case "ls6":
+                        config.watchChannel = Config.eWatchChannel.LS6;
+                        break;
+                    case "ls7":
+                        config.watchChannel = Config.eWatchChannel.LS7;
+                        break;
+                    case "ls8":
+                        config.watchChannel = Config.eWatchChannel.LS8;
+                        break;
+                    case "cwls1":
+                        config.watchChannel = Config.eWatchChannel.CWLS1;
+                        break;
+                    case "cwls2":
+                        config.watchChannel = Config.eWatchChannel.CWLS2;
+                        break;
+                    case "cwls3":
+                        config.watchChannel = Config.eWatchChannel.CWLS3;
+                        break;
+                    case "cwls4":
+                        config.watchChannel = Config.eWatchChannel.CWLS4;
+                        break;
+                    case "cwls5":
+                        config.watchChannel = Config.eWatchChannel.CWLS5;
+                        break;
+                    case "cwls6":
+                        config.watchChannel = Config.eWatchChannel.CWLS6;
+                        break;
+                    case "cwls7":
+                        config.watchChannel = Config.eWatchChannel.CWLS7;
+                        break;
+                    case "cwls8":
+                        config.watchChannel = Config.eWatchChannel.CWLS8;
+                        break;
+
+                    default:
+                        break;
+
+                }
+
+                config.Save();
+            }
+            else
+            {
+                configUI.Enabled = !configUI.Enabled;
+            }
+        }
     }
 }
