@@ -25,7 +25,7 @@ namespace MacroChain {
         [PluginService] public static ClientState ClientState { get; private set; } = null!;
         [PluginService] public static ChatGui Chat { get; private set; } = null!;
 
-        public string Name => "Macro Chain";
+        public string Name => "Macro Chain-Ori";
 
         private delegate void MacroCallDelegate(RaptureShellModule* raptureShellModule, RaptureMacroModule.Macro* macro);
 
