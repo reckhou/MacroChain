@@ -57,6 +57,7 @@ namespace MacroChain {
                     });
 
                     Framework.Update += FrameworkUpdate;
+                    Framework.Update += LoadConfig;
                     Chat.ChatMessage += ChatCommand.OnChatMessage;
 
                     PluginInterface.UiBuilder.Draw += OnDraw;
@@ -67,14 +68,26 @@ namespace MacroChain {
             });
         }
 
+        private void LoadConfig(Framework framework)
+        {
+            if (DalamudApi.ClientState != null && DalamudApi.ClientState.IsLoggedIn && DalamudApi.ClientState.LocalPlayer != null)
+            {
+                config = Config.Load();
+                Framework.Update -= LoadConfig;
+                PluginLog.LogWarning("Config.Load()! " + config.watchChannel.ToString());
+            }
+        }
+
         public void Dispose() {
             isDisposed = true;
             CommandManager.RemoveHandler("/nextmacro");
             CommandManager.RemoveHandler("/runmacro");
+            CommandManager.RemoveHandler("/mchain");
             macroCallHook?.Disable();
             macroCallHook?.Dispose();
             macroCallHook = null;
             Framework.Update -= FrameworkUpdate;
+            Framework.Update -= LoadConfig;
             Chat.ChatMessage -= ChatCommand.OnChatMessage;
             PluginInterface.UiBuilder.Draw -= OnDraw;
             PluginInterface.UiBuilder.OpenConfigUi -= OpenConfigUi;
