@@ -5,7 +5,6 @@
         <LangVersion>9.0</LangVersion>
         <Platforms>x64</Platforms>
         <Configurations>Debug;Release</Configurations>
-        <RootNamespace>MacroChain</RootNamespace>
     </PropertyGroup>
     <PropertyGroup Label="Build">
         <OutputType>Library</OutputType>
@@ -50,7 +49,7 @@
         <None Remove="lib\**" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="DalamudPackager" Version="2.1.7" />
+        <PackageReference Include="DalamudPackager" Version="2.1.8" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
     <Target Name="PackagePlugin" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
