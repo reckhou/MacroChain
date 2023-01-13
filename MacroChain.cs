@@ -31,41 +31,30 @@ namespace MacroChain {
 
         private Hook<MacroCallDelegate> macroCallHook;
 
-        private bool isDisposed;
         ConfigUI configUI;
         public static Config config;
 
         public MacroChain(DalamudPluginInterface pi) {
             DalamudApi.Initialize(this, pi);
+            configUI = new ConfigUI();
+            macroCallHook = Hook<MacroCallDelegate>.FromAddress(new IntPtr(RaptureShellModule.MemberFunctionPointers.ExecuteMacro), MacroCallDetour);
+            macroCallHook?.Enable();
 
-            Task.Run(() => {
-                configUI = new ConfigUI();
-
-                FFXIVClientStructs.Resolver.Initialize();
-                if (isDisposed) return;
-                try {
-                    macroCallHook = new Hook<MacroCallDelegate>(new IntPtr(RaptureShellModule.fpExecuteMacro), MacroCallDetour);
-                    macroCallHook?.Enable();
-
-                    CommandManager.AddHandler("/nextmacro", new Dalamud.Game.Command.CommandInfo(OnMacroCommandHandler) {
-                        HelpMessage = "Executes the next macro.",
-                        ShowInHelp = true
-                    });
-                    CommandManager.AddHandler("/runmacro", new Dalamud.Game.Command.CommandInfo(OnRunMacroCommand) {
-                        HelpMessage = "Execute a macro (Not usable inside macros). - /runmacro ## [individual|shared].",
-                        ShowInHelp = true
-                    });
-
-                    Framework.Update += FrameworkUpdate;
-                    Framework.Update += LoadConfig;
-                    Chat.ChatMessage += ChatCommand.OnChatMessage;
-
-                    PluginInterface.UiBuilder.Draw += OnDraw;
-                    PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
-                } catch (Exception ex) {
-                    PluginLog.LogError(ex.ToString());
-                }
+            CommandManager.AddHandler("/nextmacro", new Dalamud.Game.Command.CommandInfo(OnMacroCommandHandler) {
+                HelpMessage = "Executes the next macro.",
+                ShowInHelp = true
             });
+            CommandManager.AddHandler("/runmacro", new Dalamud.Game.Command.CommandInfo(OnRunMacroCommand) {
+                HelpMessage = "Execute a macro (Not usable inside macros). - /runmacro ## [individual|shared].",
+                ShowInHelp = true
+            });
+
+            Framework.Update += FrameworkUpdate;
+            Framework.Update += LoadConfig;
+            Chat.ChatMessage += ChatCommand.OnChatMessage;
+
+            PluginInterface.UiBuilder.Draw += OnDraw;
+            PluginInterface.UiBuilder.OpenConfigUi += OpenConfigUi;
         }
 
         private void LoadConfig(Framework framework)
@@ -79,7 +68,6 @@ namespace MacroChain {
         }
 
         public void Dispose() {
-            isDisposed = true;
             CommandManager.RemoveHandler("/nextmacro");
             CommandManager.RemoveHandler("/runmacro");
             CommandManager.RemoveHandler("/mchain");
