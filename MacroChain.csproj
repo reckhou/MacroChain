@@ -15,7 +15,7 @@
     </PropertyGroup>
     <PropertyGroup Label="Feature">
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>2.1.0.5</Version>
+        <Version>999.999.999.999</Version>
     </PropertyGroup>
     <PropertyGroup>
 		<AssemblyName>MacroChain-Ori</AssemblyName>
